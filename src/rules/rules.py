@@ -1,5 +1,5 @@
 import re
-import unicodedata
+from src.preprocessing.normalizer import (normalizar_para_comparacao, remover_pontuacao_final)
 
 
 MENSAGEM_SAUDACAO = (
@@ -80,46 +80,6 @@ PALAVROES = {
     "desgracado",
     "corno",
 }
-
-
-def normalizar(texto: str) -> str:
-
-    texto = texto.lower().strip()
-
-    texto = re.sub(
-        r"\s+",
-        " ",
-        texto
-    )
-
-    return texto
-
-
-def normalizar_para_comparacao(texto: str) -> str:
-
-    texto = normalizar(texto)
-
-    texto = unicodedata.normalize(
-        "NFD",
-        texto
-    )
-
-    texto = "".join(
-        caractere
-        for caractere in texto
-        if unicodedata.category(caractere) != "Mn"
-    )
-
-    return texto
-
-
-def remover_pontuacao_final(texto: str) -> str:
-
-    return re.sub(
-        r"[!?.,;:]+$",
-        "",
-        texto
-    ).strip()
 
 
 def eh_mensagem_isolada(mensagem: str, conjunto: set[str]) -> bool:
