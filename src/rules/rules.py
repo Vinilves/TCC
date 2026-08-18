@@ -86,7 +86,23 @@ def normalizar(texto: str) -> str:
 
     texto = texto.lower().strip()
 
-    texto = unicodedata.normalize("NFD", texto)
+    texto = re.sub(
+        r"\s+",
+        " ",
+        texto
+    )
+
+    return texto
+
+
+def normalizar_para_comparacao(texto: str) -> str:
+
+    texto = normalizar(texto)
+
+    texto = unicodedata.normalize(
+        "NFD",
+        texto
+    )
 
     texto = "".join(
         caractere
@@ -94,33 +110,45 @@ def normalizar(texto: str) -> str:
         if unicodedata.category(caractere) != "Mn"
     )
 
-    texto = re.sub(r"\s+", " ", texto)
-
     return texto
 
 
 def remover_pontuacao_final(texto: str) -> str:
 
-    return re.sub(r"[!?.,;:]+$", "", texto).strip()
+    return re.sub(
+        r"[!?.,;:]+$",
+        "",
+        texto
+    ).strip()
 
 
 def eh_mensagem_isolada(mensagem: str, conjunto: set[str]) -> bool:
 
-    mensagem = remover_pontuacao_final(mensagem)
+    mensagem = remover_pontuacao_final(
+        mensagem
+    )
 
     return mensagem in conjunto
 
 
 def contem_palavra_ofensiva(mensagem: str) -> bool:
 
-    palavras = re.findall(r"\w+", mensagem)
+    palavras = re.findall(
+        r"\w+",
+        mensagem
+    )
 
-    return any(palavra in PALAVROES for palavra in palavras)
+    return any(
+        palavra in PALAVROES
+        for palavra in palavras
+    )
 
 
 def verificar_regras(texto: str) -> tuple[bool, str | None]:
 
-    mensagem = normalizar(texto)
+    mensagem = normalizar_para_comparacao(
+        texto
+    )
 
     if not mensagem:
         return True, MENSAGEM_VAZIA
@@ -128,13 +156,22 @@ def verificar_regras(texto: str) -> tuple[bool, str | None]:
     if contem_palavra_ofensiva(mensagem):
         return True, MENSAGEM_MODERACAO
 
-    if eh_mensagem_isolada(mensagem, SAUDACOES):
+    if eh_mensagem_isolada(
+        mensagem,
+        SAUDACOES
+    ):
         return True, MENSAGEM_SAUDACAO
 
-    if eh_mensagem_isolada(mensagem, DESPEDIDAS):
+    if eh_mensagem_isolada(
+        mensagem,
+        DESPEDIDAS
+    ):
         return True, MENSAGEM_DESPEDIDA
 
-    if eh_mensagem_isolada(mensagem, AGRADECIMENTOS):
+    if eh_mensagem_isolada(
+        mensagem,
+        AGRADECIMENTOS
+    ):
         return True, MENSAGEM_DESPEDIDA
 
     return False, None
