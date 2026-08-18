@@ -1,7 +1,7 @@
 import re
 import torch
 
-from transformers import (AutoTokenizer, AutoModelForSeq2SeqLM)
+from transformers import MarianTokenizer, AutoModelForSeq2SeqLM
 
 MODEL_NAME = ("Helsinki-NLP/opus-mt-en-ROMANCE")
 
@@ -17,7 +17,7 @@ print("Carregando modelo de tradução...")
 print("Modelo:", MODEL_NAME)
 
 
-tokenizer = AutoTokenizer.from_pretrained(
+tokenizer = MarianTokenizer.from_pretrained(
     MODEL_NAME
 )
 
